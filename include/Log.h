@@ -10,17 +10,9 @@ using namespace ::logging;
 //LOGGING_DISABLE_LEVEL(::logging::Warning);
 //LOGGING_DISABLE_LEVEL(::logging::Info);
 
-//std::string log_filename;// = "idan.log";
-//bool log_to_stdout;// = false;
-#define LOG_FILE_CONFIG(STDOUT_EN, LOG_FILENAME)                                     \
-        typedef ::logging::OutputLevelSwitchDisabled <                               \
-                    ::logging::OutputStream <                                        \
-                        ::logging::FileOutput<&STDOUT_EN, &LOG_FILENAME>             \
-                    >                                                                \
-                > FileLogType;                                                       \
-LOGGING_DEFINE_OUTPUT( FileLogType )
+LOGGING_DEFINE_OUTPUT( ::logging::config::FileLogType )
 
+#define LOG_OBJ   logging::detail::Logger<logging::Void, logging::loggingReturnType>::logging()
 
 #define LOG(TYPE) log::emit<TYPE>()
 #define ENDL      log::endl
-

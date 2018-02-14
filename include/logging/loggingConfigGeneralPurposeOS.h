@@ -57,11 +57,11 @@ namespace logging {
         /*!\brief FileLogType is a possible %logging type, supporting %logging
          *        to a file on general purpose operating systems
          */
-/*        typedef ::logging::OutputLevelSwitchDisabled <
+         typedef ::logging::OutputLevelSwitchDisabled <
                     ::logging::OutputStream <
-                        ::logging::FileOutput<true, &log_filename>
+                        ::logging::FileOutput
                     >
-                > FileLogType;*/ // Moved to template
+                > FileLogType;
         /*!\brief StdLogType is a possible %logging type, supporting %logging
          *        to standard output on general purpose operating systems
          */

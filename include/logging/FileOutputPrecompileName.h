@@ -44,28 +44,38 @@
 #include <fstream>
 #include <string>
 
+//std::string log_filename;// = "logfile.log";
+//bool log_to_stdout;// = false;
+#define LOG_FILE_CONFIG(STDOUT_EN, LOG_FILENAME)                                     \
+        typedef ::logging::OutputLevelSwitchDisabled <                               \
+                    ::logging::OutputStream <                                        \
+                        ::logging::FileOutput<&STDOUT_EN, &LOG_FILENAME>             \
+                    >                                                                \
+                > FilePrecompLogType;                                                \
+LOGGING_DEFINE_OUTPUT( FilePrecompLogType )
+
 namespace logging {
 
     /*! \brief Provides an interface to the standard
      *         file output facilities of e.g. Linux
      *         or Windows.
      */
+    template<bool* mirrorStdout, std::string* logfile_Name>
     class FileOutput {
             /*! \brief a plain filebufer */
             std::filebuf fb;
             /*! \brief and also a plain ostream */
             std::ostream os;
-
-      private:
-            std::string logfile_Name;
-            bool mirrorStdout=true;
-
         public:
             /*! \brief The constructor opens the file, that should
              *         contain the output for writing.
              *
+             *  \todo The name of the file should be configurable
+             *        via a command line parameter.
              */
-            FileOutput() : os(&fb) {}
+            FileOutput() : os(&fb) {
+                fb.open (*logfile_Name, std::ios::out);
+            }
 
             /*! \brief The destructor closes the file and therewith
              *         it should be persitent.
@@ -73,21 +83,6 @@ namespace logging {
             ~FileOutput() {
                 fb.close();
             }
-
-            /*! \brief 1. Decides filename during dynamic run.
-             *         2. Opens the log file for writing
-             */
-            void setFilename(std::string str) {
-               logfile_Name = str;
-                fb.open (logfile_Name, std::ios::out);
-            }
-
-            /*! \brief Decides if to output to stdout in addition to file.
-             */
-            void setMirrorStdout(bool val) {
-               mirrorStdout=val;
-            }
-
 
             /*! \brief operator that can output a simple character.
              *
@@ -97,7 +92,7 @@ namespace logging {
              */
             FileOutput & operator<<(const char c) {
                 os << c;
-                if (mirrorStdout) {
+                if (*mirrorStdout) {
                   std::cout << c;
                 }
                 return *this;
@@ -107,5 +102,4 @@ namespace logging {
 } /* logging */
 
 #endif
-
 
